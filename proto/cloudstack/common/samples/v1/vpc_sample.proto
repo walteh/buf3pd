@@ -1,0 +1,215 @@
+edition = "2023";
+
+package cloudstack.vpc.v1;
+
+import "buf/validate/validate.proto";
+import "cloudstack/annotations/annotations.proto";
+import "google/protobuf/descriptor.proto";
+
+// VPCService provides operations for managing VPCs
+service VPCService {
+	// CreateVPC creates a new VPC
+	rpc CreateVPC(CreateVPCRequest) returns (CreateVPCResponse) {}
+
+
+	// ListVPCs lists VPCs with optional filtering
+	rpc ListVPCs(ListVPCsRequest) returns (ListVPCsResponse) {}
+}
+
+// CreateVPCRequest represents the parameters for creating a VPC
+message CreateVPCRequest {
+	// The name of the VPC
+	string name = 1;
+
+	// The display text of the VPC
+	string display_text = 2;
+
+	// The CIDR of the VPC
+	string cidr = 3 [
+		(buf.validate.field).string.ipv4_prefix = true
+	];
+
+	// The CIDR size of the VPC
+	int32 cidr_size = 4;
+
+	// The ID of the VPC offering
+	string vpc_offering_id = 5 [
+		(buf.validate.field).string.uuid = true
+	];
+
+	// The ID of the availability zone
+	string zone_id = 6 [
+		(buf.validate.field).string.uuid = true
+	];
+
+	// The network domain for the VPC
+	string network_domain = 7;
+
+	// Whether to start the VPC immediately
+	bool start = 8 [
+		features.field_presence = EXPLICIT
+	];
+
+	// Whether to display the VPC to end users
+	bool display = 9;
+
+	// The MTU for the network VR's public facing interfaces
+	int32 public_mtu = 10;
+
+	// DNS servers for the VPC
+	message DNSServers {
+		string ipv4_dns1 = 1 [
+			(buf.validate.field).string.ipv4 = true
+		];
+		string ipv4_dns2 = 2 [
+			(buf.validate.field).string.ipv4 = true
+		];
+		string ipv6_dns1 = 3 [
+			(buf.validate.field).string.ipv6 = true
+		];
+		string ipv6_dns2 = 4 [
+			(buf.validate.field).string.ipv6 = true
+		];
+	}
+	DNSServers dns_servers = 11;
+
+	// The source NAT IP address
+	string source_nat_ip = 12 [
+		(buf.validate.field).string.ipv4 = true
+	];
+
+	// The AS Number for the VPC tiers
+	int64 as_number = 13;
+}
+
+// CreateVPCResponse represents the response from creating a VPC
+message CreateVPCResponse {
+	// The created VPC
+	VPC vpc = 1;
+}
+
+// ListVPCsRequest represents the parameters for listing VPCs
+message ListVPCsRequest {
+	// The ID of the VPC to list
+	string id = 1 [
+		(buf.validate.field).required = true
+	];
+
+	// The ID of the zone to list VPCs from
+	string zone_id = 2 [
+		(buf.validate.field).string.uuid = true,
+		(buf.validate.field).required    = true
+	];
+
+	// The name of the VPC to list
+	string name = 3;
+
+	// The display text to filter by
+	string display_text = 4;
+
+	// The CIDR to filter by
+	string cidr = 5 [
+		(buf.validate.field).string.ipv4_prefix = true
+	];
+
+	// The ID of the VPC offering to filter by
+	string vpc_offering_id = 6 [
+		(buf.validate.field).string.uuid = true
+	];
+
+	// The state to filter by
+	string state = 7;
+
+	// Whether to filter by restart required
+	bool restart_required = 8 [
+		(buf.validate.field).required = false
+	];
+
+	// Whether to show resource icons
+	bool show_resource_icon = 9 [
+		(buf.validate.field).required = false
+	];
+
+	// The page number to list
+	int32 page = 10 [
+		default                       = 1,
+		(buf.validate.field).required = false
+	];
+
+	// The page size
+	int32 page_size = 11 [
+		default                       = 10,
+		(buf.validate.field).required = false
+	];
+}
+
+// ListVPCsResponse represents the response from listing VPCs
+message ListVPCsResponse {
+	option (buf.validate.message).disabled = false;
+	// The list of VPCs
+	repeated VPC vpcs = 1;
+
+	// The total count of VPCs
+	int32 total_count = 2;
+}
+
+// VPC represents a Virtual Private Cloud
+message VPC {
+	// The ID of the VPC
+	string id = 1;
+
+	// The name of the VPC
+	string name = 2;
+
+	// The display text of the VPC
+	string display_text = 3;
+
+	// The CIDR of the VPC
+	string cidr = 4;
+
+	// The state of the VPC
+	string state = 5;
+
+	// The ID of the VPC offering
+	string vpc_offering_id = 6;
+
+	// The ID of the zone
+	string zone_id = 7 [
+		(buf.validate.field).string.uuid = true,
+		(buf.validate.field).cel         = {
+			id:                      "zone_id",
+			expression:              "value.id == 'zone_id'",
+			message:                 "zone_id must be a valid UUID"
+		}
+	];
+
+	// The network domain
+	string network_domain = 8;
+
+	// Whether the VPC is displayed
+	bool display = 9;
+
+	// The public MTU
+	int32 public_mtu = 10;
+
+	// DNS servers
+	message DNSServers {
+		string ipv4_dns1 = 1;
+		string ipv4_dns2 = 2;
+		string ipv6_dns1 = 3;
+		string ipv6_dns2 = 4;
+	}
+	DNSServers dns_servers = 11;
+
+	// The source NAT IP
+	string source_nat_ip = 12;
+
+	// The AS Number
+	int64 as_number = 13;
+
+	// The creation time
+	string created = 14;
+
+	// The last update time
+	string updated = 15;
+}
