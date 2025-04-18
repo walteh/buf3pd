@@ -1,0 +1,22 @@
+# Example buf3pd.yaml configuration
+# This is an alternative to placing the buf3pd configuration in buf.yaml
+
+# Path where the dependencies will be stored
+path: gen/buf3pd
+
+# List of dependencies
+deps:
+  - type: git
+    repo: github.com/googleapis/googleapis
+    path: .
+    ref: master
+    filter:
+      - "google/api/**/*.proto"
+      - "google/cloud/**/*.proto"
+
+  - type: git
+    repo: github.com/bufbuild/protovalidate
+    path: proto
+    ref: main
+    filter:
+      - "**/*.proto"

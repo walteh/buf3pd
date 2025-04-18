@@ -30,6 +30,7 @@ func main() {
 	var (
 		bufYamlPath = flag.String("config", "buf.yaml", "Path to buf.yaml file")
 		workDir     = flag.String("workdir", ".", "Working directory")
+		skipModules = flag.Bool("skip-modules", false, "Skip updating modules in buf.yaml")
 	)
 	flag.Parse()
 
@@ -47,7 +48,8 @@ func main() {
 	dependencyManager := deps.NewDependencyManager(fileManager, gitManager, lockManager)
 
 	// Read config
-	cfg, err := configReader.ReadConfig(ctx, filepath.Join(absWorkDir, *bufYamlPath))
+	bufYamlFilePath := filepath.Join(absWorkDir, *bufYamlPath)
+	cfg, err := configReader.ReadConfig(ctx, absWorkDir, bufYamlFilePath)
 	if err != nil {
 		log.Fatal().Err(errors.Errorf("reading buf3pd config: %w", err)).Msg("failed to read buf3pd config")
 	}
@@ -72,6 +74,13 @@ func main() {
 	// Write lock file
 	if err := lockManager.WriteLockFile(lockFile, filepath.Join(absWorkDir, "buf3pd.lock")); err != nil {
 		log.Fatal().Err(errors.Errorf("writing lock file: %w", err)).Msg("failed to write lock file")
+	}
+
+	// Update modules in buf.yaml if not skipped
+	if !*skipModules {
+		if err := configReader.EnsureModulesInBufYaml(ctx, bufYamlFilePath, cfg.Path, cfg.Deps); err != nil {
+			log.Fatal().Err(errors.Errorf("updating modules in buf.yaml: %w", err)).Msg("failed to update modules in buf.yaml")
+		}
 	}
 
 	log.Info().Str("path", filepath.Join(absWorkDir, "buf3pd.lock")).Msg("created lock file")

@@ -12,8 +12,8 @@ deps:
     - repo: github.com/googleapis/googleapis
       path: .
       ref: heads/master
-      digest: 05586242093a059944000e7109957c1e23ef604abccc9f086bfa81380c7e0fde
+      digest: 1d3045e6f9ac4e9f84e4547ca769c08a9976eb44b440dbe4f2adde0704c3d251
       prefix: ""
       metadata:
-        commit: c759e924aa786f3df0e64499daf97d46a27edb31
+        commit: b947e523934dbac5d97613d8aa08e04fc38c5fb6
         type: git

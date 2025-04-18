@@ -1,0 +1,20 @@
+# buf.3pd.yaml - Configuration for buf3pd dependency manager
+# This file should be in the root of your project
+
+# Path where downloaded dependencies will be stored
+path: gen/buf3pd
+
+# List of dependencies to fetch
+deps:
+  - type: git
+    repo: github.com/bufbuild/protovalidate
+    path: proto/protovalidate
+    ref: heads/main
+    filter: []
+
+  - type: git
+    repo: github.com/googleapis/googleapis
+    path: .
+    ref: heads/master
+    filter:
+      - google/{api,longrunning,rpc,servicecontrol,logging,type}/**
