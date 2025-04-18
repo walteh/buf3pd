@@ -2,11 +2,9 @@ version: v2
 modules:
   - name: github.com/walteh/buf3pd
     path: proto
-
-  - name: github.com/bufbuild/protovalidate
-    path: gen/buf3pd/protovalidate
-  - name: github.com/googleapis/googleapis
-    path: gen/buf3pd/googleapis
+deps:
+  - "github.com/bufbuild/protovalidate/proto/protovalidate:main"
+  - "github.com/googleapis/googleapis:b3c548df12e04551a12a7393f60e04bf195e0a6b"
 breaking:
     use:
       - FILE

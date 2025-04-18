@@ -6,81 +6,31 @@ managed:
     override:
       - file_option: go_package_prefix
         value: github.com/walteh/cloudstack-proxy/gen/proto/golang
-        #   path: .
-    disable:
-      - module: github.com/googleapis/googleapis
-        # path: gen/buf3pd/googleapis
-        # disable:
-      - module: github.com/googleapis/googleapis
-        file_option: go_package
 
 clean: true
-# disable:
-#   - file_option: go_package
-#     module: buf.build/googleapis/googleapis
 
 plugins:
+
   - out: gen/proto/golang
     local: ["go", "tool", "google.golang.org/protobuf/cmd/protoc-gen-go"]
+    # exclude_types: [google.api]
+    include_imports: true
     strategy: all
-    exclude_types:
-      - google.api
-      - google.longrunning
-      - google.rpc
-      - google.type
-      - google.logging
-
     opt:
       - paths=source_relative
+
   - out: gen/proto/golang
     local: ["go", "tool", "google.golang.org/grpc/cmd/protoc-gen-go-grpc"]
-    exclude_types:
-      - google.api
-      - google.longrunning
-      - google.rpc
-      - google.type
-      - google.logging
-
     opt:
       - paths=source_relative
+
   - out: gen/proto/golang
     local: ["go", "tool", "connectrpc.com/connect/cmd/protoc-gen-connect-go"]
-    exclude_types:
-      - google.api
-      - google.longrunning
-      - google.rpc
-      - google.type
-      - google.logging
-
     opt:
       - paths=source_relative
+
   - out: gen/proto/golang
-    exclude_types:
-      - google.api
-      - google.longrunning
-      - google.rpc
-      - google.type
-      - google.logging
-    # local: ["./bin/protoc-gen-protovalidate"]
     local: ["go", "tool", "github.com/walteh/protoc-gen-protovalidate/cmd/protoc-gen-protovalidate"]
-    # include_imports: true
+    include_imports: true
     opt:
       - paths=source_relative
-
-    # inputs:
-    #     - module: github.com/googleapis/googleapis
-    #       path: google/api/*
-    # inputs:
-    # - git_repo: https://github.com/bufbuild/protovalidate
-    #   subdir: proto/protovalidate
-    #   branch: main
-    # - git_repo: https://github.com/googleapis/googleapis
-    #   branch: master
-    #   types:
-    #       - "google.api"
-    # - directory: proto/cloudstack
-
-    #   subdir: google
-    #   paths:
-    #       - "gogapi"
-    # - module: buf.build/googleapis/googleapis:main
